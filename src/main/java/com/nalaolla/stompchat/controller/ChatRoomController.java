@@ -5,9 +5,7 @@ import com.nalaolla.stompchat.repository.ChatRoomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
@@ -19,13 +17,33 @@ public class ChatRoomController {
     private final ChatRoomRepository chatRoomRepository;
 
     @GetMapping("/room")
-    public String chatRoom(Model model) {
+    public String rooms(Model model) {
         return "/chat/room";
     }
 
-    @GetMapping("/rooms")
+    @GetMapping("/roomlist")
     @ResponseBody
     public List<ChatRoom> chatRooms() {
+
         return chatRoomRepository.findAllRoom();
     }
+
+    @PostMapping("/room")
+    @ResponseBody
+    public ChatRoom createRoom(@RequestParam String roomName) {
+        return chatRoomRepository.createChatRoom(roomName);
+    }
+
+    @GetMapping("/room/enter/{roomId}")
+    public String roomDetail(Model model, @PathVariable String roomId) {
+        model.addAttribute("roomId", roomId);
+        return "/chat/roomdetail";
+    }
+
+    @GetMapping("/room/{roomId}")
+    @ResponseBody
+    public ChatRoom roomInfo(@PathVariable String roomId) {
+        return chatRoomRepository.findRoomById(roomId);
+    }
+
 }
